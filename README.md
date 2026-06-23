@@ -1,22 +1,37 @@
-# Robstar Kasi - Secure B2B Auto-Parts Ordering Portal
+# Robstar Kasi - Secure B2B Auto-Parts Ordering Portal v2
 
-This is the security-hardened version of the Robstar Kasi B2B auto-parts ordering portal for verified garages on Kirinyaga Road, Nairobi. The implementation rebuilds the trust boundary from scratch while preserving the existing frontend UI/UX.
+This is the second version of the Robstar Kasi B2B auto-parts ordering portal for verified garages in Kenya. The implementation rebuilds the security features from scratch while preserving the existing frontend UI/UX.
 
 ## Table of Contents
-- [Overview](#overview)
-- [Local Development Setup](#local-development-setup)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Database Setup](#database-setup)
-  - [Running the Migration](#running-the-migration)
-  - [Starting the Server](#starting-the-server)
-  - [Testing the API](#testing-the-api)
-- [Deployment to Render](#deployment-to-render)
-  - [Prerequisites](#prerequisites-1)
-  - [Step-by-Step Deployment](#step-by-step-deployment)
-- [Environment Variables](#environment-variables)
-- [API Endpoints](#api-endpoints)
-- [Troubleshooting](#troubleshooting)
+- [Robstar Kasi - Secure B2B Auto-Parts Ordering Portal v2](#robstar-kasi---secure-b2b-auto-parts-ordering-portal-v2)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+    - [Key Security Improvements](#key-security-improvements)
+  - [Local Development Setup](#local-development-setup)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+    - [Database Setup](#database-setup)
+    - [Running the Migration](#running-the-migration)
+    - [Starting the Server](#starting-the-server)
+    - [Testing the API](#testing-the-api)
+      - [Example: User Login](#example-user-login)
+      - [Database Seeding (for local development)](#database-seeding-for-local-development)
+  - [Deployment to Render](#deployment-to-render)
+    - [Prerequisites](#prerequisites-1)
+    - [Step-by-Step Deployment](#step-by-step-deployment)
+    - [Important Notes for Render](#important-notes-for-render)
+  - [Environment Variables](#environment-variables)
+  - [API Endpoints](#api-endpoints)
+    - [Authentication](#authentication)
+    - [Products](#products)
+    - [Orders](#orders)
+    - [Statistics](#statistics)
+    - [Legacy (Deprecated)](#legacy-deprecated)
+  - [Troubleshooting](#troubleshooting)
+    - [Common Issues](#common-issues)
+    - [Getting Help](#getting-help)
+  - [License](#license)
+  - [Acknowledgments](#acknowledgments)
 
 ## Overview
 
@@ -82,7 +97,7 @@ This is the security-hardened version of the Robstar Kasi B2B auto-parts orderin
 
 ### Running the Migration
 
-The migration script will create the schema and migrate any existing data from the SQLite file (if present).
+The migration script will create the schema and migrate any existing data to supabase (if present).
 
 ```bash
 npm run migrate
@@ -136,7 +151,7 @@ This will create:
 ## Deployment to Render
 
 ### Prerequisites
-- A [Render](https://render.com/) account
+- A [Render](https://vercel.com/) account
 - The code pushed to a GitHub repository (Render connects to your repo)
 
 ### Step-by-Step Deployment
@@ -146,7 +161,7 @@ This will create:
    - Choose a name (e.g., `robstar-kasi-db`)
    - Select the region closest to your users
    - Leave the version as default
-   - Click "Create Database"
+   - Click "Create Database"w
 
 2. **Note the Database Connection Details**:
    - After creation, go to the database's dashboard
