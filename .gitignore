@@ -1,0 +1,9 @@
+node_modules/
+client/node_modules/
+client/build/
+server/robstar.sqlite
+.env
+.env.example
+skills-lock.json
+.claude/
+.agents/
