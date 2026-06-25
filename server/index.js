@@ -13,6 +13,15 @@ const { body } = require('express-validator');
 
 const app = express();
 
+const dns = require('dns');
+
+app.get('/api/debug-dns', (req, res) => {
+  const url = new URL(process.env.DATABASE_URL);
+  dns.lookup(url.hostname, (err, address, family) => {
+    res.json({ hostname: url.hostname, address, family, err: err?.message });
+  });
+});
+
 // Security middleware
 app.use(helmet());
 app.use(cors({
