@@ -13,15 +13,6 @@ const { body } = require('express-validator');
 
 const app = express();
 
-const dns = require('dns');
-
-app.get('/api/debug-dns', (req, res) => {
-  const url = new URL(process.env.DATABASE_URL);
-  dns.lookup(url.hostname, (err, address, family) => {
-    res.json({ hostname: url.hostname, address, family, err: err?.message });
-  });
-});
-
 // Security middleware
 app.use(helmet());
 app.use(cors({
@@ -61,13 +52,7 @@ app.use('/api/auth', require('./routes/auth')); // Auth routes
 
 /* ── HELPER ──────────────────────────────────────── */
 function rowsToObjects(result) {
-  if (!result?.length) return [];
-  const { columns, values } = result[0];
-  return values.map((row) => {
-    const obj = {};
-    columns.forEach((col, i) => (obj[col] = row[i]));
-    return obj;
-  });
+  return result?.rows || [];
 }
 
 /* ── USERS ───────────────────────────────────────── */
@@ -75,7 +60,7 @@ function rowsToObjects(result) {
 app.get("/api/users", requireAuth, requireAdmin, async (req, res) => {
   try {
     const result = await query(`SELECT id, name, business_name, phone, role, whitelisted, created_at FROM users ORDER BY business_name`);
-    res.json(rowsToObjects(result));
+    res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -93,7 +78,7 @@ app.post("/api/users/login", (req, res) => {
 app.get("/api/products", async (req, res) => {
   try {
     const { category, search } = req.query;
-    let sql = `SELECT id, sku, name, category, brand, unit, price_kes, stock_qty, min_order_qty, active FROM products WHERE active=1`;
+    let sql = `SELECT id, sku, name, category, brand, unit, price_kes, stock_qty, min_order_qty, active FROM products WHERE active=true`;
     const params = [];
     if (category) {
       sql += ` AND category=$${params.length + 1}`;
@@ -309,15 +294,15 @@ app.get("/api/stats", requireAuth, requireAdmin, async (req, res) => {
   try {
     const ordersResult = await query(`SELECT COUNT(*) as count, SUM(total_kes) as revenue FROM orders WHERE status != 'cancelled'`);
     const pendingResult = await query(`SELECT COUNT(*) as count FROM orders WHERE status='pending'`);
-    const productsResult = await query(`SELECT COUNT(*) as count FROM products WHERE active=1`);
-    const lowStockResult = await query(`SELECT COUNT(*) as count FROM products WHERE stock_qty < 20 AND active=1`);
+    const productsResult = await query(`SELECT COUNT(*) as count FROM products WHERE active=true`);
+    const lowStockResult = await query(`SELECT COUNT(*) as count FROM products WHERE stock_qty < 20 AND active=true`);
 
     res.json({
-      total_orders:    rowsToObjects(ordersResult)[0]?.count   || 0,
-      total_revenue:   rowsToObjects(ordersResult)[0]?.revenue || 0,
-      pending_orders:  rowsToObjects(pendingResult)[0]?.count  || 0,
-      total_products:  rowsToObjects(productsResult)[0]?.count || 0,
-      low_stock_count: rowsToObjects(lowStockResult)[0]?.count || 0,
+      total_orders:    ordersResult[0]?.count   || 0,
+      total_revenue:   ordersResult[0]?.revenue || 0,
+      pending_orders:  pendingResult[0]?.count  || 0,
+      total_products:  productsResult[0]?.count || 0,
+      low_stock_count: lowStockResult[0]?.count || 0,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
