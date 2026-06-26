@@ -99,7 +99,7 @@ app.get("/api/products", async (req, res) => {
 
 app.get("/api/products/categories", async (req, res) => {
   try {
-    const result = await query(`SELECT DISTINCT category FROM products WHERE active=1 ORDER BY category`);
+    const result = await query(`SELECT DISTINCT category FROM products WHERE active=true ORDER BY category`);
     const cats = result.rows.map(r => r.category);
     res.json(cats);
   } catch (err) {
